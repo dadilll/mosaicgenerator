@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	width  = 640
-	height = 520
+	width     = 640
+	height    = 520
+	pixelSize = 10
 )
 
 func SaveImage(file multipart.File, savePath string) error {
@@ -36,7 +37,7 @@ func SaveImage(file multipart.File, savePath string) error {
 	return nil
 }
 
-func GenerateMosaic(inputPath, outputPath string) error {
+func GenerateMosaic(inputPath, outputPath string, pixelSize int) error {
 	img, err := loadImage(inputPath)
 	if err != nil {
 		return err
@@ -44,7 +45,7 @@ func GenerateMosaic(inputPath, outputPath string) error {
 
 	resized := resize.Resize(width, height, img, resize.NearestNeighbor)
 
-	mosaic := createMosaic(resized)
+	mosaic := createMosaic(resized, pixelSize)
 
 	out, err := os.Create(outputPath)
 	if err != nil {
@@ -60,11 +61,9 @@ func GenerateMosaic(inputPath, outputPath string) error {
 	return nil
 }
 
-func createMosaic(img image.Image) *image.RGBA {
+func createMosaic(img image.Image, pixelSize int) *image.RGBA {
 	bounds := img.Bounds()
 	mosaic := image.NewRGBA(bounds)
-
-	pixelSize := 10
 
 	for x := bounds.Min.X; x < bounds.Max.X; x += pixelSize {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y += pixelSize {

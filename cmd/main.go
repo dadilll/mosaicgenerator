@@ -18,8 +18,8 @@ func main() {
 		}
 	})
 
-	fmt.Println("Server is running at https://localhost:8080")
-	err := http.ListenAndServeTLS(":8080", "server.crt", "server.key", nil)
+	fmt.Println("Сервер запущен на http://localhost:8080")
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
