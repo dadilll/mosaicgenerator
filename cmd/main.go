@@ -10,7 +10,6 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Received request:", r.URL.Path)
 		if r.Method == "GET" {
 			image.ServeForm(w)
 		} else if r.Method == "POST" {
