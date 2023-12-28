@@ -7,14 +7,19 @@ This Go application sets up a simple web server for generating mosaic images. It
 ### Clone the Repository
 ```
 git clone https://github.com/dadilll/mosaicgenerator.git
+```
+```
 cd mosaicgenerator
 ```
 
 ### Run the Application
 ```
 cd cmd
+```
+```
 go run main.go
 ```
+
 ### Access the Application
 Open your web browser and go to http://localhost:8080.
 
