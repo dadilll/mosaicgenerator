@@ -6,8 +6,8 @@ This Go application sets up a simple web server for generating mosaic images. It
 
 ### Clone the Repository
 ```
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
+git clone https://github.com/dadilll/mosaicgenerator.git
+cd mosaicgenerator
 ```
 
 ### Run the Application
