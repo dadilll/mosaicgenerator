@@ -1,10 +1,12 @@
 package image
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/jpeg"
+	"image/png"
 	"mime/multipart"
 	"os"
 
@@ -17,7 +19,7 @@ const (
 	pixelSize = 10
 )
 
-func SaveImage(file multipart.File, savePath string) error {
+func SaveImage(file multipart.File, savePath string, imageType string) error {
 	imageData, _, err := image.Decode(file)
 	if err != nil {
 		return err
@@ -29,7 +31,15 @@ func SaveImage(file multipart.File, savePath string) error {
 	}
 	defer out.Close()
 
-	err = jpeg.Encode(out, imageData, nil)
+	switch imageType {
+	case "jpeg", "jpg":
+		err = jpeg.Encode(out, imageData, nil)
+	case "png":
+		err = png.Encode(out, imageData)
+	default:
+		return fmt.Errorf("unsupported image type: %s", imageType)
+	}
+
 	if err != nil {
 		return err
 	}
@@ -97,13 +107,13 @@ func averageColor(img image.Image, x, y, size int) color.RGBA {
 func loadImage(path string) (image.Image, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error opening image file: %v", err)
 	}
 	defer file.Close()
 
 	img, _, err := image.Decode(file)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error decoding image: %v", err)
 	}
 
 	return img, nil

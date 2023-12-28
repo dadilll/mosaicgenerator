@@ -1,0 +1,73 @@
+<!-- form.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mosaic Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 50px;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #4caf50;
+        }
+        label:hover {
+            text-decoration: underline;
+        }
+        label.non-clickable {
+            cursor: default;
+            color: #333;
+            text-decoration: none;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 150px;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        input[type="number"] {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post" action="/" enctype="multipart/form-data">
+        <label for="fileInput" id="fileLabel" class="clickable">Select an image to upload:</label>
+        <input type="file" name="image" id="fileInput" accept="image/*">
+        <br>
+        <label class="non-clickable">Pixel Size:</label>
+        <input type="number" name="pixelSize" value="10" min="1">
+        <br>
+        <input type="submit" value="Generate Mosaic">
+    </form>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function () {
+            var fileName = this.value.split("\\").pop();
+            document.getElementById('fileLabel').innerText = "Selected file: " + fileName;
+        });
+    </script>
+</body>
+</html>
