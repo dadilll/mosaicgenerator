@@ -1,6 +1,8 @@
 package httpserver
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -62,5 +64,23 @@ func HandlePostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.ServeFile(w, r, mosaicImagePath)
+	mosaicImage, err := os.ReadFile(mosaicImagePath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	base64Image := base64.StdEncoding.EncodeToString(mosaicImage)
+
+	responseData := map[string]string{"imageType": imageType, "image": base64Image}
+	responseJSON, err := json.Marshal(responseData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(responseJSON)
 }

@@ -1,8 +1,8 @@
-<!-- form.html -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mosaic Generator</title>
     <style>
         body {
@@ -11,29 +11,38 @@
             text-align: center;
             margin: 50px;
         }
+
         form {
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
+            max-width: 400px;
+            margin: 0 auto;
         }
+
         label {
             display: block;
             margin: 10px 0;
             color: #4caf50;
+            font-size: 16px;
         }
+
         label:hover {
             text-decoration: underline;
         }
+
         label.non-clickable {
             cursor: default;
             color: #333;
             text-decoration: none;
         }
+
         input[type="file"] {
             display: none;
         }
+
         input[type="submit"] {
             background-color: #4caf50;
             color: white;
@@ -41,33 +50,130 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            width: 150px;
-            margin-top: 10px;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 16px;
         }
+
         input[type="submit"]:hover {
             background-color: #45a049;
         }
+
         input[type="number"] {
             margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .mosaic-container {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 2px solid #4caf50;
+            text-align: center;
+            position: relative;
+        }
+
+        img#mosaicImage {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Style the download button */
+        .download-btn {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: #00517D;
+        }
+
+        /* Show the download button when there is an image */
+        .mosaic-container.has-image .download-btn {
+            display: inline-block;
         }
     </style>
+
+    <!-- Add this script inside the <head> tag -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle file input change
+            document.getElementById('fileInput').addEventListener('change', function () {
+                var fileName = this.value.split("\\").pop();
+                document.getElementById('fileLabel').innerText = "Selected file: " + fileName;
+            });
+
+            // Handle form submission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission behavior
+
+                // Create a FormData object to send form data
+                var formData = new FormData(this);
+
+                // Make a POST request using fetch
+                fetch('/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if there's an error
+                    if (data.error) {
+                        // Display error message
+                        document.getElementById('mosaicContainer').innerHTML = `<p class="error-message">${data.error}</p>`;
+                    } else {
+                        // Update the image source with the received base64-encoded image data
+                        document.getElementById('mosaicImage').src = 'data:image/' + data.imageType + ';base64,' + data.image;
+
+                        // Add a class to the mosaic container to indicate that it has an image
+                        document.getElementById('mosaicContainer').classList.add('has-image');
+                        // Set the download link href
+                        document.getElementById('downloadBtn').href = 'data:image/' + data.imageType + ';base64,' + data.image;
+                        // Set the download link download attribute
+                        document.getElementById('downloadBtn').download = 'generated_mosaic.' + data.imageType;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
 </head>
 <body>
     <form method="post" action="/" enctype="multipart/form-data">
         <label for="fileInput" id="fileLabel" class="clickable">Select an image to upload:</label>
         <input type="file" name="image" id="fileInput" accept="image/*">
-        <br>
         <label class="non-clickable">Pixel Size:</label>
         <input type="number" name="pixelSize" value="10" min="1">
-        <br>
         <input type="submit" value="Generate Mosaic">
     </form>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function () {
-            var fileName = this.value.split("\\").pop();
-            document.getElementById('fileLabel').innerText = "Selected file: " + fileName;
-        });
-    </script>
+    <!-- Add an ID to the mosaic container for displaying the generated image -->
+    <div id="mosaicContainer" class="mosaic-container">
+        <img id="mosaicImage" alt="Generated Mosaic">
+        <!-- Add the download button with a unique ID -->
+        <a id="downloadBtn" class="download-btn">Download Mosaic</a>
+    </div>
 </body>
 </html>
